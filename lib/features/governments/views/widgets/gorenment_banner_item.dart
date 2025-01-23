@@ -3,7 +3,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_egypt_with_state_management/core/theme_bloc/theme_bloc.dart';
+import 'package:go_egypt_with_state_management/core/bloc/theme_bloc/theme_bloc.dart';
 
 class GovernmentBannerItem extends StatelessWidget {
   const GovernmentBannerItem({
