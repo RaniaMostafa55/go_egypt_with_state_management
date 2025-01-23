@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_egypt_with_state_management/core/bloc/auth/auth_bloc.dart';
+import 'package:go_egypt_with_state_management/dialog_utils.dart';
 import 'package:go_egypt_with_state_management/generated/l10n.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,7 +21,31 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return BlocListener<AuthBloc, AuthState>(
+  listener: (context, state) {
+    if (state is AuthLoading) {
+      DialogUtils.showLoading(context: context);
+    } else if (state is AuthAuthenticated) {
+      DialogUtils.hideLoading(context);
+      DialogUtils.showMessage(
+          context: context,
+          message: 'Account Created successfully',
+          title: 'Register',
+          posMessageName: 'Ok',
+          posAction: () {
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => LoginPage()));
+          });
+    } else if (state is AuthError) {
+      DialogUtils.hideLoading(context);
+      DialogUtils.showMessage(
+          context: context,
+          message: state.message ?? "",
+          title: 'Error',
+          posMessageName: 'Ok');
+    }
+  },
+  child: Scaffold(
       //use "SingleChildScrollView" to make the page scrollable
       body: Center(
         child: SingleChildScrollView(
@@ -130,7 +157,11 @@ class _SignUpPageState extends State<SignUpPage> {
                           "pass", Constants.signUpPasswordController.text);
                       prefs.setString(
                           "phone", Constants.signUpPhoneNumberController.text);
-                      signUpDialog();
+                      context.read<AuthBloc>().add(SignupRequested(username: Constants.signUpFullnameController.text, email: Constants.signUpEmailController.text, password: Constants.signUpPasswordController.text, phone: Constants.signUpPhoneNumberController.text));
+                      Constants.signUpFullnameController.clear();
+                      Constants.signUpEmailController.clear();
+                      Constants.signUpPasswordController.clear();
+                      Constants.signUpPhoneNumberController.clear();
                     }
                   },
                   text: S.of(context).sign_up,
@@ -140,59 +171,60 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         ),
       ),
-    );
+    ),
+);
   }
 
-  // a function created to make an alert dialog show up to tell the user that he signed up successfully
-  Future<void> signUpDialog() {
-    return showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(S.of(context).Success),
-          content: Text(S.of(context).account_created_successfully),
-          actions: [
-            //a "close button", if the user pressed that button all the textfields will be clear and navigate to "LoginPage"
-            ElevatedButton(
-                onPressed: () {
-                  //in order to remove the "AlertDialog" from stack then add "LoginPage" by navigating to it
-                  Navigator.pop(context);
-                  Constants.signUpFullnameController.clear();
-                  Constants.signUpEmailController.clear();
-                  Constants.signUpPasswordController.clear();
-                  Constants.signUpPhoneNumberController.clear();
-                  //use "Navigator.push" to navigate to another page
-                  Navigator.push(
-                      context,
-                      //use "PageRouteBuilder" to identify the page which will navigate to and the way of transition
-                      PageRouteBuilder(
-                          //identify the page which we want to navigate to
-                          pageBuilder:
-                              (context, animation, secondaryAnimation) =>
-                                  const LoginPage(),
-                          //identify how the transition will be during navigation
-                          transitionsBuilder:
-                              (context, animation, secondaryAnimation, child) {
-                            //determine the speed of transition "easeInOut" to start with low speed, then high, then low again
-                            var curvedAnimation = CurvedAnimation(
-                              parent: animation,
-                              curve: Curves.easeInOut,
-                            );
-                            //create fade out and in transition
-                            return FadeTransition(
-                              opacity: curvedAnimation,
-                              child: child,
-                            );
-                          },
-                          transitionDuration:
-                              const Duration(milliseconds: 850)));
-                },
-                child: Text(
-                  S.of(context).close,
-                ))
-          ],
-        );
-      },
-    );
-  }
+  // // a function created to make an alert dialog show up to tell the user that he signed up successfully
+  // Future<void> signUpDialog() {
+  //   return showDialog(
+  //     context: context,
+  //     builder: (context) {
+  //       return AlertDialog(
+  //         title: Text(S.of(context).Success),
+  //         content: Text(S.of(context).account_created_successfully),
+  //         actions: [
+  //           //a "close button", if the user pressed that button all the textfields will be clear and navigate to "LoginPage"
+  //           ElevatedButton(
+  //               onPressed: () {
+  //                 //in order to remove the "AlertDialog" from stack then add "LoginPage" by navigating to it
+  //                 Navigator.pop(context);
+  //                 Constants.signUpFullnameController.clear();
+  //                 Constants.signUpEmailController.clear();
+  //                 Constants.signUpPasswordController.clear();
+  //                 Constants.signUpPhoneNumberController.clear();
+  //                 //use "Navigator.push" to navigate to another page
+  //                 Navigator.push(
+  //                     context,
+  //                     //use "PageRouteBuilder" to identify the page which will navigate to and the way of transition
+  //                     PageRouteBuilder(
+  //                         //identify the page which we want to navigate to
+  //                         pageBuilder:
+  //                             (context, animation, secondaryAnimation) =>
+  //                                 const LoginPage(),
+  //                         //identify how the transition will be during navigation
+  //                         transitionsBuilder:
+  //                             (context, animation, secondaryAnimation, child) {
+  //                           //determine the speed of transition "easeInOut" to start with low speed, then high, then low again
+  //                           var curvedAnimation = CurvedAnimation(
+  //                             parent: animation,
+  //                             curve: Curves.easeInOut,
+  //                           );
+  //                           //create fade out and in transition
+  //                           return FadeTransition(
+  //                             opacity: curvedAnimation,
+  //                             child: child,
+  //                           );
+  //                         },
+  //                         transitionDuration:
+  //                             const Duration(milliseconds: 850)));
+  //               },
+  //               child: Text(
+  //                 S.of(context).close,
+  //               ))
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 }

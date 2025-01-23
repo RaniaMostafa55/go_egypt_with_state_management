@@ -1,8 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_egypt_with_state_management/core/bloc/auth/auth_bloc.dart';
+import 'package:go_egypt_with_state_management/core/bloc/theme_bloc/theme_bloc.dart';
 import 'package:go_egypt_with_state_management/core/core_cubits/language_cubit.dart';
-import 'package:go_egypt_with_state_management/core/theme_bloc/theme_bloc.dart';
+import 'package:go_egypt_with_state_management/dialog_utils.dart';
+import 'package:go_egypt_with_state_management/features/auth/views/login_page.dart';
 import 'package:go_egypt_with_state_management/features/profile/widgets/custom_editing_text_field.dart';
 import 'package:go_egypt_with_state_management/features/profile/widgets/custom_list_tile.dart';
 import 'package:go_egypt_with_state_management/features/profile/widgets/custom_text_buttom.dart';
@@ -42,7 +45,30 @@ class _ProfileViewState extends State<ProfileView> {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    return Scaffold(
+    return BlocListener<AuthBloc, AuthState>(
+        listener: (context, state) {
+      if (state is AuthLoading) {
+        DialogUtils.showLoading(context: context);
+      } else if (state is AuthUnauthenticated) {
+        DialogUtils.hideLoading(context);
+        DialogUtils.showMessage(
+            context: context,
+            message: 'Logout successfully',
+            title: 'Logout',
+            posMessageName: 'Ok',
+            posAction: () {
+              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>LoginPage()));
+            });
+      }else if(state is AuthError){
+        DialogUtils.hideLoading(context);
+        DialogUtils.showMessage(
+            context: context,
+            message: state.message??"",
+            title: 'Error',
+            posMessageName: 'Ok');
+      }
+  },
+  child: Scaffold(
       appBar: AppBar(
         title: Text(S.of(context).profile),
         automaticallyImplyLeading: false,
@@ -132,10 +158,15 @@ class _ProfileViewState extends State<ProfileView> {
               height: 20,
             ),
             buildLanguageSwitcher(size),
+
+            TextButton(onPressed: (){
+              context.read<AuthBloc>().add(LogoutRequested());
+            }, child: Text('Logout'))
           ],
         ),
       ),
-    );
+    ),
+);
   }
 
   ToggleSwitch buildLanguageSwitcher(Size size) {

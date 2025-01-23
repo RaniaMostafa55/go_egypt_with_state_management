@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_egypt_with_state_management/core/bloc/auth/auth_bloc.dart';
+import 'package:go_egypt_with_state_management/dialog_utils.dart';
 import 'package:go_egypt_with_state_management/features/auth/constants.dart';
 import 'package:go_egypt_with_state_management/features/layout/layout_view.dart';
 import 'package:go_egypt_with_state_management/generated/l10n.dart';
@@ -33,7 +36,30 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return BlocListener<AuthBloc, AuthState>(
+  listener: (context, state) {
+    if (state is AuthLoading) {
+      DialogUtils.showLoading(context: context);
+    } else if (state is AuthAuthenticated) {
+      DialogUtils.hideLoading(context);
+      DialogUtils.showMessage(
+          context: context,
+          message: 'Login successful',
+          title: 'Log in',
+          posMessageName: 'Ok',
+          posAction: () {
+            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>LayoutView()));
+          });
+    }else if(state is AuthError){
+      DialogUtils.hideLoading(context);
+      DialogUtils.showMessage(
+          context: context,
+          message: state.message??"",
+          title: 'Error',
+          posMessageName: 'Ok');
+    }
+  },
+  child: Scaffold(
       body: Center(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -97,11 +123,7 @@ class _LoginPageState extends State<LoginPage> {
                           Constants.loginPasswordController.text == password) {
                         Constants.loginEmailController.clear();
                         Constants.loginPasswordController.clear();
-                        Navigator.push(context, MaterialPageRoute(
-                          builder: (context) {
-                            return const LayoutView();
-                          },
-                        ));
+                       context.read<AuthBloc>().add(LoginRequested(email: email, password: password));
                       } else {
                         //if a problem is found, a snackBar will show up
                         SnackBar snackBar = const SnackBar(
@@ -119,6 +141,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
       ),
-    );
+    ),
+);
   }
 }
