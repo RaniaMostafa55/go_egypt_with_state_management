@@ -3,8 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_egypt_with_state_management/features/home/models/card_model.dart';
 import 'package:go_egypt_with_state_management/features/home/widgets/card_widget.dart';
 import 'package:go_egypt_with_state_management/features/home/widgets/place_item_widget.dart';
+import 'package:go_egypt_with_state_management/features/home/widgets/shimmer_card_widget.dart';
+import 'package:go_egypt_with_state_management/features/home/widgets/shimmer_place_item.dart';
 import 'package:go_egypt_with_state_management/generated/l10n.dart';
-
 import '../../../core/blocs/places_bloc/places_bloc.dart';
 import '../../../core/blocs/places_bloc/places_event.dart';
 import '../../../core/blocs/places_bloc/places_state.dart';
@@ -38,7 +39,54 @@ class _HomeViewState extends State<HomeView> {
       body: BlocBuilder<PlacesBloc, PlacesState>(
         builder: (context, state) {
           if (state is PlacesLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    SizedBox(
+                      height: size.height * 0.4,
+                      child: GridView.builder(
+                        padding: EdgeInsets.zero,
+                        scrollDirection: Axis.horizontal,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 1,
+                          mainAxisSpacing: 10,
+                        ),
+                        itemBuilder: (context, index) =>
+                            const ShimmerPlaceItem(),
+                        itemCount: 5, // Number of shimmer placeholders
+                      ),
+                    ),
+                    Text(
+                      S.of(context).popular_places,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                    SizedBox(
+                      height: size.height * 0.4,
+                      child: GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 1,
+                          mainAxisSpacing: 10,
+                        ),
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) =>
+                            const ShimmerCardWidget(),
+                        itemCount: 5, // Number of shimmer placeholders
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
           } else if (state is PlacesError) {
             return Center(child: Text(state.message));
           } else if (state is PlacesLoaded) {
@@ -95,11 +143,6 @@ class _HomeViewState extends State<HomeView> {
           }
           return const SizedBox.shrink();
         },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => context.read<PlacesBloc>().add(LoadPlaces()),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        child: const Icon(Icons.refresh),
       ),
     );
   }

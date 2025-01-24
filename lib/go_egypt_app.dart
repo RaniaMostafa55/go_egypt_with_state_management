@@ -5,9 +5,10 @@ import 'package:go_egypt_with_state_management/core/blocs/auth/auth_bloc.dart';
 import 'package:go_egypt_with_state_management/core/blocs/theme_bloc/theme_bloc.dart';
 import 'package:go_egypt_with_state_management/core/core_cubits/language_cubit.dart';
 import 'package:go_egypt_with_state_management/core/theme/theme.dart';
-import 'package:go_egypt_with_state_management/features/auth/views/sign_up_page.dart';
+import 'package:go_egypt_with_state_management/features/layout/layout_view.dart';
 import 'package:go_egypt_with_state_management/generated/l10n.dart';
 
+import 'core/blocs/governments_bloc/governments_bloc.dart';
 import 'core/blocs/places_bloc/places_bloc.dart';
 
 class GoEgyptApp extends StatelessWidget {
@@ -25,6 +26,9 @@ class GoEgyptApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => PlacesBloc(),
+        ),
+        BlocProvider(
+          create: (context) => GovernmentsBloc(),
         ),
       ],
       child: BlocBuilder<LanguageCubit, Locale>(
@@ -47,7 +51,8 @@ class GoEgyptApp extends StatelessWidget {
                 darkTheme: dark,
                 themeMode:
                     (state is DarkModeState) ? ThemeMode.dark : ThemeMode.light,
-                home: SignUpPage(),
+                // home: SignUpPage(),
+                home: LayoutView(),
               );
             },
           );

@@ -8,7 +8,6 @@ import 'package:go_egypt_with_state_management/features/home/widgets/place_item_
 import '../models/place_model.dart';
 
 class CardWidget extends StatefulWidget {
-  // final int index;
   final CardModel card;
   final PlaceModel place;
   const CardWidget({
