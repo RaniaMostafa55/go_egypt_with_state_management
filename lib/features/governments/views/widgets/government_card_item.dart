@@ -3,7 +3,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_egypt_with_state_management/core/bloc/theme_bloc/theme_bloc.dart';
+import 'package:go_egypt_with_state_management/core/blocs/theme_bloc/theme_bloc.dart';
 import 'package:go_egypt_with_state_management/core/helpers/is_current_locale_english.dart';
 import 'package:go_egypt_with_state_management/features/governments/models/governments_model.dart';
 import 'package:go_egypt_with_state_management/features/governments/views/government_details_view.dart';

@@ -3,8 +3,8 @@ import 'package:go_egypt_with_state_management/core/helpers/is_current_locale_en
 import 'package:go_egypt_with_state_management/features/home/models/place_model.dart';
 
 class PlaceItemWidget extends StatelessWidget {
-  final int index;
-  const PlaceItemWidget({super.key, required this.index});
+  final PlaceModel place;
+  const PlaceItemWidget({super.key, required this.place});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +19,7 @@ class PlaceItemWidget extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(15),
             child: Image.network(
-              PlaceModel.places[index].imagePath,
+              place.imagePath,
               width: screenWidth * 0.8,
               height: screenHeight * 0.24,
               fit: BoxFit.cover,
@@ -29,9 +29,7 @@ class PlaceItemWidget extends StatelessWidget {
             height: 5,
           ),
           Text(
-            isCurrentLocaleEnglish()
-                ? PlaceModel.places[index].enName
-                : PlaceModel.places[index].arName,
+            isCurrentLocaleEnglish() ? place.enName : place.arName,
             style: const TextStyle(fontSize: 20.0),
           ),
         ],

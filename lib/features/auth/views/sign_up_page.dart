@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_egypt_with_state_management/core/bloc/auth/auth_bloc.dart';
+import 'package:go_egypt_with_state_management/core/blocs/auth/auth_bloc.dart';
 import 'package:go_egypt_with_state_management/dialog_utils.dart';
 import 'package:go_egypt_with_state_management/generated/l10n.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';

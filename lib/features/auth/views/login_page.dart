@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_egypt_with_state_management/core/bloc/auth/auth_bloc.dart';
+import 'package:go_egypt_with_state_management/core/blocs/auth/auth_bloc.dart';
 import 'package:go_egypt_with_state_management/dialog_utils.dart';
 import 'package:go_egypt_with_state_management/features/auth/constants.dart';
 import 'package:go_egypt_with_state_management/features/layout/layout_view.dart';

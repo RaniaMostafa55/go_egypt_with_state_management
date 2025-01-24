@@ -1,8 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_egypt_with_state_management/core/bloc/auth/auth_bloc.dart';
-import 'package:go_egypt_with_state_management/core/bloc/theme_bloc/theme_bloc.dart';
+import 'package:go_egypt_with_state_management/core/blocs/auth/auth_bloc.dart';
+import 'package:go_egypt_with_state_management/core/blocs/theme_bloc/theme_bloc.dart';
 import 'package:go_egypt_with_state_management/core/core_cubits/language_cubit.dart';
 import 'package:go_egypt_with_state_management/dialog_utils.dart';
 import 'package:go_egypt_with_state_management/features/auth/views/login_page.dart';

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_egypt_with_state_management/core/bloc/auth/auth_bloc.dart';
-import 'package:go_egypt_with_state_management/core/bloc/theme_bloc/theme_bloc.dart';
+import 'package:go_egypt_with_state_management/core/blocs/auth/auth_bloc.dart';
+import 'package:go_egypt_with_state_management/core/blocs/theme_bloc/theme_bloc.dart';
 import 'package:go_egypt_with_state_management/core/core_cubits/language_cubit.dart';
 import 'package:go_egypt_with_state_management/core/theme/theme.dart';
 import 'package:go_egypt_with_state_management/features/auth/views/sign_up_page.dart';
 import 'package:go_egypt_with_state_management/generated/l10n.dart';
+
+import 'core/blocs/places_bloc/places_bloc.dart';
 
 class GoEgyptApp extends StatelessWidget {
   const GoEgyptApp({super.key});
@@ -20,6 +22,9 @@ class GoEgyptApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => AuthBloc(),
+        ),
+        BlocProvider(
+          create: (context) => PlacesBloc(),
         ),
       ],
       child: BlocBuilder<LanguageCubit, Locale>(
@@ -41,7 +46,7 @@ class GoEgyptApp extends StatelessWidget {
                 theme: light,
                 darkTheme: dark,
                 themeMode:
-                (state is DarkModeState) ? ThemeMode.dark : ThemeMode.light,
+                    (state is DarkModeState) ? ThemeMode.dark : ThemeMode.light,
                 home: SignUpPage(),
               );
             },
