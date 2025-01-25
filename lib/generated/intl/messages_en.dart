@@ -66,7 +66,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "password_should_contain_at_least_6_characters":
             MessageLookupByLibrary.simpleMessage(
                 "Password should contain at least 6 characters"),
-        "phone_number": MessageLookupByLibrary.simpleMessage("Full Name"),
+        "phone_number": MessageLookupByLibrary.simpleMessage("Phone Number"),
         "please_enter_a_valid_email":
             MessageLookupByLibrary.simpleMessage("Please enter a valid email"),
         "please_enter_your_full_name":

@@ -17,10 +17,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         final email = await SharedPrefHelper.getString("email") ?? "";
         final password = await SharedPrefHelper.getString("pass") ?? "";
 
-        if (name.isNotEmpty &&
-            phone.isNotEmpty &&
-            email.isNotEmpty &&
-            password.isNotEmpty) {
+        if (name.isNotEmpty && email.isNotEmpty && password.isNotEmpty) {
           final user = UserProfile(
             name: name,
             email: email,

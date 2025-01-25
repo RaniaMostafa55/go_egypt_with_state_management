@@ -290,10 +290,10 @@ class S {
     );
   }
 
-  /// `Full Name`
+  /// `Phone Number`
   String get phone_number {
     return Intl.message(
-      'Full Name',
+      'Phone Number',
       name: 'phone_number',
       desc: '',
       args: [],
