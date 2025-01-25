@@ -33,9 +33,9 @@ class GoEgyptApp extends StatelessWidget {
           create: (context) => GovernmentsBloc(),
         ),
         BlocProvider(
-          create: (context) => ProfileBloc ()..add(LoadProfile()),
+          // create: (context) => ProfileBloc ()..add(LoadProfile()),
+          create: (context) => ProfileBloc(),
         ),
-
       ],
       child: BlocBuilder<LanguageCubit, Locale>(
         builder: (context, locale) {

@@ -13,7 +13,6 @@ import 'package:go_egypt_with_state_management/features/profile/widgets/custom_l
 import 'package:go_egypt_with_state_management/features/profile/widgets/custom_text_buttom.dart';
 import 'package:go_egypt_with_state_management/features/profile/widgets/profile_pic_frame.dart';
 import 'package:go_egypt_with_state_management/generated/l10n.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 class ProfileView extends StatefulWidget {
@@ -29,230 +28,161 @@ class _ProfileViewState extends State<ProfileView> {
   String email = '';
   String password = '';
 
-  getCredentials() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    name = prefs.getString("name") ?? "";
-    phone = prefs.getString("phone") ?? "";
-    email = prefs.getString("email") ?? "";
-    password = prefs.getString("pass") ?? "";
-  }
-
   @override
   void initState() {
     super.initState();
-    getCredentials();
+    // Load profile data when the view is initialized
+    context.read<ProfileBloc>().add(LoadProfile());
   }
 
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return BlocListener<AuthBloc, AuthState>(
-        listener: (context, state) {
-          if (state is AuthLoading) {
+      listener: (context, state) {
+        if (state is AuthLoading) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
             DialogUtils.showLoading(context: context);
-          } else if (state is AuthUnauthenticated) {
+          });
+        } else if (state is AuthUnauthenticated) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
             DialogUtils.hideLoading(context);
             DialogUtils.showMessage(
-                context: context,
-                message: 'Logout successfully',
-                title: 'Logout',
-                posMessageName: 'Ok',
-                posAction: () {
-                  Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => LoginPage()));
-                });
-          } else if (state is AuthError) {
+              context: context,
+              message: 'Logout successfully',
+              title: 'Logout',
+              posMessageName: 'Ok',
+              posAction: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => LoginPage()),
+                );
+              },
+            );
+          });
+        } else if (state is AuthError) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
             DialogUtils.hideLoading(context);
             DialogUtils.showMessage(
-                context: context,
-                message: state.message ?? "",
-                title: 'Error',
-                posMessageName: 'Ok');
-          }
-        },
-        child: Scaffold(
-            appBar: AppBar(
-              title: Text(S.of(context).profile),
-              automaticallyImplyLeading: false,
-              actions: [
-                BlocBuilder<ThemeBloc, ThemeState>(
-                  builder: (context, state) {
-                    return IconButton(
-                        onPressed: () {
-                          BlocProvider.of<ThemeBloc>(context)
-                              .add(ToggleTheme());
-                        },
-                        icon: state is DarkModeState
-                            ? Icon(Icons.light_mode)
-                            : Icon(Icons.dark_mode));
+              context: context,
+              message: state.message ?? "",
+              title: 'Error',
+              posMessageName: 'Ok',
+            );
+          });
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(S.of(context).profile),
+          automaticallyImplyLeading: false,
+          actions: [
+            BlocBuilder<ThemeBloc, ThemeState>(
+              builder: (context, state) {
+                return IconButton(
+                  onPressed: () {
+                    BlocProvider.of<ThemeBloc>(context).add(ToggleTheme());
                   },
-                ),
-              ],
+                  icon: state is DarkModeState
+                      ? Icon(Icons.light_mode)
+                      : Icon(Icons.dark_mode),
+                );
+              },
             ),
-            body: SingleChildScrollView(
+          ],
+        ),
+        body: BlocBuilder<ProfileBloc, ProfileState>(
+          builder: (context, state) {
+            if (state is ProfileLoading) {
+              return Center(child: CircularProgressIndicator());
+            } else if (state is ProfileLoaded || state is ProfileUpdated) {
+              final profile = (state is ProfileLoaded)
+                  ? state.profile
+                  : (state as ProfileUpdated).profile;
+
+              return SingleChildScrollView(
                 child: Column(
-              children: [
-                Column(children: [
-                  SizedBox(
-                    height: 20,
-                  ),
-                  BlocBuilder<ProfileBloc, ProfileState>(
-                    builder: (context, state) {
-                      return ProfilePicFrame(
-                        img: context.read<ProfileBloc>().avatarPath,
-                      );
-                    },
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                ]),
-                BlocConsumer<ProfileBloc, ProfileState>(
-                    listener: (context, state) {
-                  if (state is ProfileLoading) {
-                    DialogUtils.showLoading(context: context);
-                  } else if (state is ProfileError) {
-                    DialogUtils.hideLoading(context);
-                    DialogUtils.showMessage(
-                        context: context,
-                        message: state.message ?? "",
-                        title: 'Error',
-                        posMessageName: 'Ok');
-                  }
-                }, builder: (context, state) {
-                  if (state is ProfileUpdated) {
-                    DialogUtils.hideLoading(context);
-                    return Column(
+                  children: [
+                    Column(
                       children: [
-                        CustomListTile(
-                            icon: Icons.person,
-                            title: S.of(context).full_name,
-                            subtitle: state.profile.name,
-                            id: 'name',
-                            onPressed: () {
-                              showEditDialog(
-                                  context, 'name', S.of(context).full_name);
-                            }),
-                        CustomListTile(
-                          icon: Icons.phone,
-                          title: S.of(context).phone_number,
-                          subtitle: state.profile.phone,
-                          id: 'phone',
-                          onPressed: () {
-                            showEditDialog(
-                                context, 'phone', S.of(context).phone_number);
-                          },
+                        SizedBox(height: 20),
+                        ProfilePicFrame(
+                          img: context.read<ProfileBloc>().avatarPath,
                         ),
-                        CustomListTile(
-                          icon: Icons.mail_rounded,
-                          title: S.of(context).email_address,
-                          subtitle: state.profile.email,
-                          id: 'email',
-                          onPressed: () {
-                            showEditDialog(
-                              context,
-                              'email',
-                              S.of(context).email_address,
-                            );
-                          },
-                        ),
-                        CustomListTile(
-                          icon: Icons.password,
-                          title: S.of(context).password,
-                          subtitle:
-                              hashedPassword(state.profile.password.length),
-                          id: 'password',
-                          onPressed: () {
-                            showEditDialog(
-                              context,
-                              'password',
-                              S.of(context).password,
-                            );
-                          },
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        buildLanguageSwitcher(size),
-                        TextButton(
-                            onPressed: () {
-                              context.read<AuthBloc>().add(LogoutRequested());
-                            },
-                            child: Text('Logout'))
+                        SizedBox(height: 20),
                       ],
-                    );
-                  } else if (state is ProfileLoaded) {
-                    DialogUtils.hideLoading(context);
-                    return Column(
-                      children: [
-                        CustomListTile(
-                            icon: Icons.person,
-                            title: S.of(context).full_name,
-                            subtitle: state.profile.name,
-                            id: 'name',
-                            onPressed: () {
-                              showEditDialog(
-                                  context, 'name', S.of(context).full_name);
-                            }),
-                        CustomListTile(
-                          icon: Icons.phone,
-                          title: S.of(context).phone_number,
-                          subtitle: state.profile.phone,
-                          id: 'phone',
-                          onPressed: () {
-                            showEditDialog(
-                                context, 'phone', S.of(context).phone_number);
-                          },
-                        ),
-                        CustomListTile(
-                          icon: Icons.mail_rounded,
-                          title: S.of(context).email_address,
-                          subtitle: state.profile.email,
-                          id: 'email',
-                          onPressed: () {
-                            showEditDialog(
-                              context,
-                              'email',
-                              S.of(context).email_address,
-                            );
-                          },
-                        ),
-                        CustomListTile(
-                          icon: Icons.password,
-                          title: S.of(context).password,
-                          subtitle:
-                              hashedPassword(state.profile.password.length),
-                          id: 'password',
-                          onPressed: () {
-                            showEditDialog(
-                              context,
-                              'password',
-                              S.of(context).password,
-                            );
-                          },
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        buildLanguageSwitcher(size),
-                        TextButton(
-                            onPressed: () {
-                              context.read<AuthBloc>().add(LogoutRequested());
-                            },
-                            child: Text('Logout'))
-                      ],
-                    );
-                  }
-                  return SizedBox.shrink();
-                })
-              ],
-            ))));
+                    ),
+                    CustomListTile(
+                      icon: Icons.person,
+                      title: S.of(context).full_name,
+                      subtitle: profile.name,
+                      id: 'name',
+                      onPressed: () {
+                        showEditDialog(
+                          context,
+                          'name',
+                          S.of(context).full_name,
+                        );
+                      },
+                    ),
+                    CustomListTile(
+                      icon: Icons.phone,
+                      title: S.of(context).phone_number,
+                      subtitle: profile.phone,
+                      id: 'phone',
+                      onPressed: () {
+                        showEditDialog(
+                          context,
+                          'phone',
+                          S.of(context).phone_number,
+                        );
+                      },
+                    ),
+                    CustomListTile(
+                      icon: Icons.mail_rounded,
+                      title: S.of(context).email_address,
+                      subtitle: profile.email,
+                      id: 'email',
+                      onPressed: () {
+                        showEditDialog(
+                          context,
+                          'email',
+                          S.of(context).email_address,
+                        );
+                      },
+                    ),
+                    CustomListTile(
+                      icon: Icons.password,
+                      title: S.of(context).password,
+                      subtitle: hashedPassword(profile.password.length),
+                      id: 'password',
+                      onPressed: () {
+                        showEditDialog(
+                          context,
+                          'password',
+                          S.of(context).password,
+                        );
+                      },
+                    ),
+                    SizedBox(height: 20),
+                    SizedBox(height: 20),
+                    buildLanguageSwitcher(size),
+                    TextButton(
+                      onPressed: () {
+                        context.read<AuthBloc>().add(LogoutRequested());
+                      },
+                      child: Text('Logout'),
+                    ),
+                  ],
+                ),
+              );
+            } else if (state is ProfileError) {
+              return Center(child: Text(state.message));
+            }
+            return Center(child: Text('No data found'));
+          },
+        ),
+      ),
+    );
   }
 
   ToggleSwitch buildLanguageSwitcher(Size size) {
@@ -270,12 +200,8 @@ class _ProfileViewState extends State<ProfileView> {
         TextStyle(fontSize: 18),
       ],
       activeBgColors: [
-        [
-          Theme.of(context).colorScheme.primary,
-        ],
-        [
-          Theme.of(context).colorScheme.error,
-        ]
+        [Theme.of(context).colorScheme.primary],
+        [Theme.of(context).colorScheme.error],
       ],
       animate: true,
       animationDuration: 200,
@@ -287,11 +213,7 @@ class _ProfileViewState extends State<ProfileView> {
   }
 
   String hashedPassword(int passLength) {
-    String stars = '';
-    for (int i = 0; i < passLength; i++) {
-      stars += '*';
-    }
-    return stars;
+    return '*' * passLength;
   }
 
   Future<void> showEditDialog(
@@ -330,16 +252,19 @@ class _ProfileViewState extends State<ProfileView> {
                     break;
                   case 'password':
                     password = editedValue;
-
                     break;
                   default:
                 }
-                context.read<ProfileBloc>().add(UpdateProfile(
-                    profileData: UserProfile(
-                        name: name,
-                        email: email,
-                        password: password,
-                        phone: phone)));
+                context.read<ProfileBloc>().add(
+                      UpdateProfile(
+                        profileData: UserProfile(
+                          name: name,
+                          email: email,
+                          password: password,
+                          phone: phone,
+                        ),
+                      ),
+                    );
                 Navigator.pop(context);
                 SnackBar snackBar = SnackBar(
                   content: Text(S.of(context).profile_has_successfully_updated),
@@ -352,7 +277,7 @@ class _ProfileViewState extends State<ProfileView> {
               onPressed: () {
                 Navigator.pop(context);
               },
-            )
+            ),
           ],
         );
       },
