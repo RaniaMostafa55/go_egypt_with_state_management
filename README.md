@@ -4,9 +4,7 @@ It is a mobile application for tourists visiting Egypt to explore landmarks, mus
 
 ## 📹 App Demo Video
 
-Watch the demo video of the app to see its features in action:
-
-![Watch the video](https://github.com/user-attachments/assets/3c5ae8fb-f31a-4e58-bef4-6cba9abe16ac)
+[Watch the localization demo video here](https://github.com/user-attachments/assets/3c5ae8fb-f31a-4e58-bef4-6cba9abe16ac)
 
 # Sign Up Page
 
