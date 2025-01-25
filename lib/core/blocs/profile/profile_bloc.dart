@@ -7,7 +7,7 @@ part 'profile_event.dart';
 part 'profile_state.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
-  ProfileBloc() : super(ProfileInitial()) {
+  ProfileBloc() : super(ProfileLoading()) {
     on<LoadProfile>((event, emit) async {
       emit(ProfileLoading());
       await Future.delayed(Duration(seconds: 2));
@@ -39,7 +39,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         await SharedPrefHelper.setData("pass", profileUpdate.password);
         await SharedPrefHelper.setData("email", profileUpdate.email);
         await SharedPrefHelper.setData("phone", profileUpdate.phone);
+        print('${profileUpdate.name} ${profileUpdate.password} ${profileUpdate.email} ${profileUpdate.phone}');
+        print('-----------------------------------------------');
         emit(ProfileUpdated(profileUpdate));
+        print('${profileUpdate.name} ${profileUpdate.password} ${profileUpdate.email} ${profileUpdate.phone}');
+
         
 
       } catch (e) {

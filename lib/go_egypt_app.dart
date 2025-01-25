@@ -33,7 +33,7 @@ class GoEgyptApp extends StatelessWidget {
           create: (context) => GovernmentsBloc(),
         ),
         BlocProvider(
-          create: (context) => ProfileBloc(),
+          create: (context) => ProfileBloc ()..add(LoadProfile()),
         ),
 
       ],
