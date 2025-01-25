@@ -82,11 +82,11 @@ Widget Used
 
 ## State Management
 
-- Bloc: Manage the states and data passing throw screens efficiently with bloc using `bloc_consumer` that easily perform listen to changes and rebuild the widgets together.
+- **Bloc**: Manage the states and data passing throw screens efficiently with bloc using `bloc_consumer` that easily perform listen to changes and rebuild the widgets together.
 
 ## Dependencies
 
-- flutter_bloc: Flutter Widgets that make it easy to implement the BLoC (Business Logic Component) design pattern.
+- **flutter_bloc**: Flutter Widgets that make it easy to implement the BLoC (Business Logic Component) design pattern.
 
 ## Team Members
 
