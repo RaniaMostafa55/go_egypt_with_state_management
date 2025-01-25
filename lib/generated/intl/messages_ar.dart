@@ -65,7 +65,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "password_should_contain_at_least_6_characters":
             MessageLookupByLibrary.simpleMessage(
                 "كلمة المرور يجب أن تحتوي على 6 أحرف على الأقل"),
-        "phone_number": MessageLookupByLibrary.simpleMessage("الاسم بالكامل"),
+        "phone_number": MessageLookupByLibrary.simpleMessage("رقم الهاتف "),
         "please_enter_a_valid_email": MessageLookupByLibrary.simpleMessage(
             "من فضلك أدخل بريد إلكتروني صالح"),
         "please_enter_your_full_name":

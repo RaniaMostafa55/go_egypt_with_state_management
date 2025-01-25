@@ -1,4 +1,16 @@
 part of 'profile_bloc.dart';
 
-@immutable
-sealed class ProfileEvent {}
+abstract class ProfileEvent {}
+
+class LoadProfile extends ProfileEvent {}
+class UpdateProfile extends ProfileEvent {
+  final UserProfile profileData;
+
+   UpdateProfile({required this.profileData});
+}
+class UpdateAvatar extends ProfileEvent {
+  final String avatarPath;
+
+   UpdateAvatar({required this.avatarPath});
+}
+

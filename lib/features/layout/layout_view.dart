@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_egypt_with_state_management/core/blocs/profile/profile_bloc.dart';
 import 'package:go_egypt_with_state_management/features/favorites/favorites_view.dart';
 import 'package:go_egypt_with_state_management/features/governments/views/governments_view.dart';
 import 'package:go_egypt_with_state_management/features/home/views/home_view.dart';
