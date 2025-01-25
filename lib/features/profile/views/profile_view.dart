@@ -13,6 +13,7 @@ import 'package:go_egypt_with_state_management/features/profile/widgets/custom_l
 import 'package:go_egypt_with_state_management/features/profile/widgets/custom_text_buttom.dart';
 import 'package:go_egypt_with_state_management/features/profile/widgets/profile_pic_frame.dart';
 import 'package:go_egypt_with_state_management/generated/l10n.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 class ProfileView extends StatefulWidget {
@@ -28,11 +29,20 @@ class _ProfileViewState extends State<ProfileView> {
   String email = '';
   String password = '';
 
+  getCredentials() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    name = prefs.getString("name") ?? "";
+    phone = prefs.getString("phone") ?? "";
+    email = prefs.getString("email") ?? "";
+    password = prefs.getString("pass") ?? "";
+  }
+
   @override
   void initState() {
     super.initState();
     // Load profile data when the view is initialized
     context.read<ProfileBloc>().add(LoadProfile());
+    getCredentials();
   }
 
   @override
