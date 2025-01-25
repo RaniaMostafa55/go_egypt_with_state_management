@@ -7,6 +7,7 @@ part 'profile_event.dart';
 part 'profile_state.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
+  var avatarPath = "assets/images/boy_avatar.jpeg";
   ProfileBloc() : super(ProfileLoading()) {
     on<LoadProfile>((event, emit) async {
       emit(ProfileLoading());
@@ -53,21 +54,25 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<UpdateAvatar>((event, emit) async {
       emit(ProfileLoading());
       try {
-        String path = event.avatarPath;
-        var name = SharedPrefHelper.getString("name") ?? "";
-        var phone = SharedPrefHelper.getString("phone") ?? "";
-        var email = SharedPrefHelper.getString("email") ?? "";
-        var password = SharedPrefHelper.getString("pass") ?? "";
+        var name = await SharedPrefHelper.getString("name") ?? "";
+        var phone = await SharedPrefHelper.getString("phone") ?? "";
+        var email = await SharedPrefHelper.getString("email") ?? "";
+        var password = await SharedPrefHelper.getString("pass") ?? "";
+      toggleAvatar();
         final user = UserProfile(
             name: name,
             email: email,
             password: password,
-            phone: phone,
-            path: path);
+            phone: phone,);
         emit(ProfileUpdated(user));
       } catch (e) {
         emit(ProfileError(e.toString()));
       }
     });
+  }
+  void toggleAvatar (){
+    avatarPath == "assets/images/boy_avatar.jpeg"?avatarPath ='assets/images/girl_avatar.jpeg':avatarPath="assets/images/boy_avatar.jpeg";
+    SharedPrefHelper.setData('path', avatarPath);
+
   }
 }

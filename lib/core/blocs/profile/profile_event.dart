@@ -8,9 +8,5 @@ class UpdateProfile extends ProfileEvent {
 
    UpdateProfile({required this.profileData});
 }
-class UpdateAvatar extends ProfileEvent {
-  final String avatarPath;
-
-   UpdateAvatar({required this.avatarPath});
-}
+class UpdateAvatar extends ProfileEvent {}
 

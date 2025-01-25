@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_egypt_with_state_management/core/blocs/profile/profile_bloc.dart';
 
 class ProfilePicFrame extends StatelessWidget {
   const ProfilePicFrame({super.key, required this.img});
@@ -16,7 +18,7 @@ class ProfilePicFrame extends StatelessWidget {
             shape: BoxShape.circle,
             image: DecorationImage(
               fit: BoxFit.cover,
-              image: NetworkImage(img),
+              image: AssetImage(img),
             ),
             boxShadow: [
               BoxShadow(
@@ -44,7 +46,9 @@ class ProfilePicFrame extends StatelessWidget {
                 color: Colors.white,
                 size: 18,
               ),
-              onPressed: () {},
+              onPressed: () {
+                context.read<ProfileBloc>().add(UpdateAvatar());
+              },
             ),
           ),
         ),
